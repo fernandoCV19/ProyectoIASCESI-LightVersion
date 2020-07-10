@@ -7,8 +7,8 @@ from tensorflow.keras.models import load_model
 
 #preparamos el modelo que distingue barbijos
 longitud, altura = 100, 100
-modelo = "ModeloReconocedorBarbijos/modeloV2.h5"
-pesos = "ModeloReconocedorBarbijos/pesosV2.h5"
+modelo = "modeloV2.h5"
+pesos = "pesosV2.h5"
 
 #cargamos el modelo y sus pesos
 cnn = load_model(modelo)
@@ -16,7 +16,7 @@ cnn.load_weights(pesos)
 
 #preparamos el modelo de haarcascade para reconocimiento facial
 cap = cv2.VideoCapture(0)
-faceClassif = cv2.CascadeClassifier('Haarcascade/haarcascade_frontalface_default.xml')
+faceClassif = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 
 #funcion que predice si alguien esta usando un barbijo o no
@@ -32,6 +32,7 @@ def predict(x):
     #sin barbijo
     return False
 
+
 #analizis en tiempo real de un rostro
 while True:
   ret,frame = cap.read()
@@ -46,16 +47,16 @@ while True:
     rostro = cv2.resize(rostro,(100,100))
     rostro = img_to_array(rostro)
     rostro = np.expand_dims(rostro, axis=0)
-    rostro = rostro/255.0
+
     
-    # procesar imagen en la otra red neuronal
-    # si la persona lleva barbijo mostrar el rectangulo que rodea la cara verde
-    # si la persona no lleva barbijo mostrar el rectangilo que rodea el rostro en rojo
+    # procesar imagen en la otra red neurona
     # el modelo sirve con multiples rostros al mismo tiempo
     if (predict(rostro)):
-        cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),2)
+         # si la persona lleva barbijo mostrar el rectangulo que rodea la cara verde
+        cv2.rectangle(frame, (x,y),(x+w,y+h),(0,255,0),0)
     else:
-        cv2.rectangle(frame, (x,y),(x+w,y+h),(0,0,255),2)
+        # si la persona no lleva barbijo mostrar el rectangilo que rodea el rostro en rojo
+        cv2.rectangle(frame, (x,y),(x+w,y+h),(0,0,255),0)
     
   cv2.imshow('frame',frame)
   
